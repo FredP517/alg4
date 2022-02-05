@@ -18,15 +18,15 @@ public class KdTree {
             this.cnt = cnt;
         }
     }
+     // construct an empty set of points
     public KdTree(){
         root = null;
     }
-    // construct an empty set of points
+     // is the set empty?
     public boolean isEmpty(){
         if(root == null) return true;
         return false;
     }
-    // is the set empty?
     public int size(){
         if(isEmpty()) return 0;
         return root.cnt;
@@ -35,19 +35,18 @@ public class KdTree {
         if(x == null) return 0;
         return x.cnt;
     }
-    // number of points in the set
+    // add the point to the set (if it is not already in the set)
     public void insert(Point2D p){
         if(p == null) throw new IllegalArgumentException();
-        root = insert(root, p, 0.0, 0.0, 1.0, 1.0, true); //indicate the range of the rectangle
+        root = insert(root, p, 0.0, 0.0, 1.0, 1.0, true); //initialize the range of the rectangle
     }
-    // add the point to the set (if it is not already in the set)
     private Node insert(Node x, Point2D p, double x0, double y0, double x1, double y1, boolean isVertical){
         if(x == null) return new Node(p, new RectHV(x0, y0, x1, y1), 1);
         if(x.p.equals(p)) return x;
         if(isVertical){
             //distribute the points to the left or right space
             double cmp = p.x() - x.p.x();
-            if(cmp < 0) x.l = insert(x.l, p, x0, y0, x.p.x(),y1,!isVertical); //下一层反转分类方法
+            if(cmp < 0) x.l = insert(x.l, p, x0, y0, x.p.x(),y1,!isVertical); //reveverse the left/right or up/down classification method
             else x.r = insert(x.r, p, x.p.x(), y0, x1, y1, !isVertical);
         }
         else{
@@ -77,7 +76,6 @@ public class KdTree {
             else return contains(x.r, p, !isVertical);
         }
     }
-    // does the set contain point p?
     public void draw(){
         if(isEmpty()) return;
         Queue<Point2D> q = new Queue<>();
@@ -86,7 +84,6 @@ public class KdTree {
             q.dequeue().draw();
         }
     }
-    // draw all points to standard draw
     public Iterable<Point2D> range(RectHV rect){
         if(rect == null) throw new IllegalArgumentException();
         Queue<Point2D> q = new Queue<>();
@@ -106,7 +103,6 @@ public class KdTree {
         q.enqueue(x.p);
         inorder(x.r, q);
     }
-    // all points that are inside the rectangle (or on the boundary)
     public Point2D nearest(Point2D p){
         if(p == null) throw new IllegalArgumentException();
         if(isEmpty()) return null;
